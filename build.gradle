@@ -1,0 +1,57 @@
+plugins {
+	id 'java'
+}
+
+repositories {
+	maven {
+		url = 'https://repo.runelite.net'
+		content {
+			includeGroupByRegex("net\\.runelite.*")
+		}
+	}
+	mavenCentral()
+}
+
+def runeLiteVersion = 'latest.release'
+
+dependencies {
+	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+}
+
+group = 'com.jarreminder'
+version = '1.0.0'
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release.set(11)
+}
+
+processResources {
+	from('.') {
+		include 'runelite-plugin.properties'
+	}
+}
+
+tasks.register('runClient', JavaExec) {
+	group = 'runelite'
+	description = 'Launch RuneLite with Jar Reminder in dev mode'
+	dependsOn testClasses
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.jarreminder.JarReminderPluginTest'
+	jvmArgs '-ea', '-Drunelite.pluginhub.dev=true'
+}
+
+tasks.register('installSideloadedPlugin', Copy) {
+	group = 'runelite'
+	description = 'Build and copy Jar Reminder jar to RuneLite sideloaded-plugins'
+	dependsOn jar
+
+	def userHome = System.getenv('USERPROFILE') ?: System.getProperty('user.home')
+	into "${userHome}/.runelite/sideloaded-plugins"
+	from(jar.archiveFile)
+	rename { 'jar-reminder.jar' }
+}
