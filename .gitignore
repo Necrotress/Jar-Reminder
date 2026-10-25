@@ -1,0 +1,36 @@
+# Gradle
+.gradle/
+build/
+bin/
+
+# Java
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Editors and local tooling
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+.classpath
+.project
+.settings/
+nbactions.xml
+nb-configuration.xml
+nbproject/
+.cursor/
+.cursorignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets and local junk
+.env
+.env.*
+credentials.properties
+*.log
+hs_err_pid*
